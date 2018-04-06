@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mapr.ojai.search.config.SearchServiceConfig;
 import com.mapr.ojai.search.config.TableConfig;
+import com.mapr.ojai.search.util.OjaiSearchServiceUtils;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexResponse;
@@ -55,7 +56,7 @@ public class ElasticSearchIndexService {
      */
     public void saveIndexForTable(String tablePath, String documentId, JsonNode changes) {
 
-        String indexName = tablePathToIndexName(tablePath);
+        String indexName = OjaiSearchServiceUtils.tablePathToIndexName(tablePath);
         // Create index
         try {
             IndicesExistsResponse existsResponse = client.admin().indices().prepareExists(indexName).get();
@@ -89,7 +90,7 @@ public class ElasticSearchIndexService {
      */
     public void deleteIndexForTable(String tablePath, String documentId) {
 
-        String indexName = tablePathToIndexName(tablePath);
+        String indexName = OjaiSearchServiceUtils.tablePathToIndexName(tablePath);
         DeleteResponse response = client.prepareDelete(indexName, tablePath, documentId).get();
         log.info("Elasticsearch Delete Response: '{}'", response);
     }
@@ -136,19 +137,6 @@ public class ElasticSearchIndexService {
         }
 
         return optionalTable.get().getIndexedFields();
-    }
-
-    /**
-     * Replaces all invalid characters from table path with underscore.
-     *
-     * @param tablePath
-     * @return
-     */
-    private String tablePathToIndexName(String tablePath) {
-
-        // , ", *, \, <, |, ,, >, /, ? - Elastic Search index name can not contain these chars
-        String replaced = tablePath.replaceAll("[*,\"/\\\\<>|?]", "_");
-        return (replaced.startsWith("_")) ? replaced.substring(1) : replaced;
     }
 
 }

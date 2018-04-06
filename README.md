@@ -15,8 +15,11 @@ be distributed as Docker image for example.
 
 Must be included as dependency to Java application. Can be represented as single Java class. Usage example:
 ```
+Connection connection = DriverManager.getConnection("ojai:mapr:");
 
-OjaiSearchClient clinet = new OjaiSearchClient("ojai:mapr:", "elastichostname:9300");
+    ...
+
+OjaiSearchClient clinet = new OjaiSearchClient(connection, "elastichostname:9300");
 List<Document> documents = clinet.search("/apps/albums", "Immortal");
 
     ...

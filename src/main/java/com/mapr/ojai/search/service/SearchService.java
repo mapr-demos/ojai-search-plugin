@@ -31,7 +31,7 @@ public class SearchService {
      */
     private static final KafkaConsumer<byte[], ChangeDataRecord> consumer = new KafkaConsumer<>(consumerProperties);
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
 
         SearchServiceConfig config = (args.length > 0)
                 ? SearchServiceConfig.fromFile(args[0])

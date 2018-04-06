@@ -17,9 +17,9 @@
         <log4j.core.version>2.9.0</log4j.core.version>
         <elasticsearch.version>5.6.1</elasticsearch.version>
         <elasticsearch.client.version>5.5.3</elasticsearch.client.version>
-        <common.cli.version>1.4</common.cli.version>
         <exec.plugin.version>1.6.0</exec.plugin.version>
-        <shade.plugin.version>2.4.1</shade.plugin.version>
+        <junit.version>4.12</junit.version>
+
     </properties>
 
     <repositories>
@@ -30,6 +30,13 @@
     </repositories>
 
     <dependencies>
+
+        <!-- OJAI Driver which is used to connect to MapR cluster -->
+        <dependency>
+            <artifactId>mapr-ojai-driver</artifactId>
+            <groupId>com.mapr.ojai</groupId>
+            <version>${mapr.library.version}</version>
+        </dependency>
 
         <!-- MapR CDC Dependencies -->
         <dependency>
@@ -83,11 +90,17 @@
             <version>3.4</version>
         </dependency>
 
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
-
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.1.0</version>

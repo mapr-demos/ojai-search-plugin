@@ -1,0 +1,10 @@
+elastic: localhost:9300
+
+tables:
+  -
+    path: /apps/ojai_search_plugin_test_table
+    changelog: /apps/ojai_search_plugin_changelog:test
+    indexedFields:
+      - first_name
+      - last_name
+      - details
