@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
-public class SearchService {
+public class SearchIndexService {
 
-    private static final Logger log = LoggerFactory.getLogger(SearchService.class);
+    private static final Logger log = LoggerFactory.getLogger(SearchIndexService.class);
 
     private static final long CONSUMER_POLL_TIMEOUT = 500L;
     private static final Properties consumerProperties = new Properties();

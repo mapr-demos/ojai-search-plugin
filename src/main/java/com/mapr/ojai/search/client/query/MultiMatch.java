@@ -4,33 +4,33 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
 /**
- * Used for full text search on some field. Operator flag can be 'AND' or 'OR' to control the boolean clauses
- * (defaults to 'OR').
+ * The multi_match query builds on the match query to allow multi-field queries. Fields can be specified with
+ * wildcards (eg: "*_name").
  */
-public class Match implements OjaiSearchQuery {
+public class MultiMatch implements OjaiSearchQuery {
 
     public enum Operator {
         AND,
         OR
     }
 
-    private String field;
+    private String[] fields;
     private Object text;
     private Operator operator;
 
-    public Match(String field, Object text) {
-        this(field, text, Operator.OR);
+    public MultiMatch(Object text, String... fields) {
+        this(text, Operator.OR, fields);
     }
 
-    public Match(String field, Object text, Operator operator) {
-        this.field = field;
+    public MultiMatch(Object text, Operator operator, String... fields) {
+        this.fields = fields;
         this.text = text;
         this.operator = operator;
     }
 
     @Override
     public QueryBuilder query() {
-        return QueryBuilders.matchQuery(field, text).operator(operator());
+        return QueryBuilders.multiMatchQuery(text, fields).operator(operator());
     }
 
     private org.elasticsearch.index.query.Operator operator() {

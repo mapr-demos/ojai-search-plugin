@@ -5,6 +5,5 @@ tables:
     path: /apps/ojai_search_plugin_test_table
     changelog: /apps/ojai_search_plugin_changelog:test
     indexedFields:
-      - first_name
-      - last_name
-      - details
+      - indexed_field
+      - second_indexed_field

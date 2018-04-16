@@ -3,7 +3,7 @@ package com.mapr.ojai.search.config;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.mapr.ojai.search.service.SearchService;
+import com.mapr.ojai.search.service.SearchIndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,7 +129,7 @@ public class SearchServiceConfig {
 
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         try {
-            return mapper.readValue(SearchService.class.getClassLoader().getResource(resourceName), SearchServiceConfig.class);
+            return mapper.readValue(SearchIndexService.class.getClassLoader().getResource(resourceName), SearchServiceConfig.class);
         } catch (IOException e) {
             throw new IllegalArgumentException("Can not load config from resource: '" + resourceName + "'", e);
         }

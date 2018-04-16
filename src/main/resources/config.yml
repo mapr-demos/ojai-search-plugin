@@ -10,5 +10,5 @@ tables:
 #    path: /apps/test_table2
 #    changelog: /apps/test_changelog2:test2
 #    indexedFields:
-#      - name
+#      - field
 #      - surname
