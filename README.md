@@ -2,7 +2,7 @@
 
 ## Design
 
-![](../docs/images/ojai-search-plugin-design.png?raw=true "Search plugin design")
+![](docs/images/ojai-search-plugin-design.png?raw=true "Search plugin design")
 
 
 OJAI Search Plugin consists of the following two components: Search Plugin Service and Search Client.

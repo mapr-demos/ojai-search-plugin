@@ -1,7 +1,6 @@
 package com.mapr.ojai.examples;
 
 import com.mapr.ojai.search.client.OjaiSearchClient;
-import com.mapr.ojai.search.client.query.Match;
 import com.mapr.ojai.search.client.query.QueryString;
 import org.ojai.Document;
 import org.ojai.DocumentStream;
@@ -15,11 +14,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class QuryStringExample {
+public class QueryStringExample {
 
     public static final String ELASTIC_SEARCH_HOST_PORT = "localhost:9300";
 
-    private static Logger log = LoggerFactory.getLogger(QuryStringExample.class);
+    private static Logger log = LoggerFactory.getLogger(QueryStringExample.class);
 
     public static void main(String[] args) throws IOException {
 
@@ -39,7 +38,7 @@ public class QuryStringExample {
         OjaiSearchClient searchClient = new OjaiSearchClient(connection, ELASTIC_SEARCH_HOST_PORT);
 
         // Full-text search on 'indexed_field' field using QueryString query
-        DocumentStream found = searchClient.search("/apps/tests_table",
+        DocumentStream found = searchClient.search("/apps/test_table",
                 new QueryString("indexed_field", "(new york city) OR (search entry)"));
 
         for (Document document : found) {

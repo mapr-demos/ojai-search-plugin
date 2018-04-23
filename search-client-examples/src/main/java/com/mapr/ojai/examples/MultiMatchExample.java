@@ -39,7 +39,7 @@ public class MultiMatchExample {
         OjaiSearchClient searchClient = new OjaiSearchClient(connection, ELASTIC_SEARCH_HOST_PORT);
 
         // Full-text search on 'indexed_field' field using MultiMatch query
-        DocumentStream found = searchClient.search("/apps/tests_table",
+        DocumentStream found = searchClient.search("/apps/test_table",
                 new MultiMatch("entry", "indexed_field", "second_indexed_field"));
 
         for (Document document : found) {

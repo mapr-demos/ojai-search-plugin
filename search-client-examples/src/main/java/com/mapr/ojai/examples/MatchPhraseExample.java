@@ -39,7 +39,7 @@ public class MatchPhraseExample {
         OjaiSearchClient searchClient = new OjaiSearchClient(connection, ELASTIC_SEARCH_HOST_PORT);
 
         // Full-text search on 'indexed_field' field using MatchPhrase query
-        DocumentStream found = searchClient.search("/apps/tests_table",
+        DocumentStream found = searchClient.search("/apps/test_table",
                 new MatchPhrase("indexed_field", "Some text, which contains"));
 
         for (Document document : found) {

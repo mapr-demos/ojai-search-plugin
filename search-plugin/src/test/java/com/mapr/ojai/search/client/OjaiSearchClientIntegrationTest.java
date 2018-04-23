@@ -61,6 +61,12 @@ public class OjaiSearchClientIntegrationTest {
                     "./bin/create-table-changelog.sh to create test table and changelog", e);
         }
 
+        // Delete all documents from test table
+        DocumentStream documents = ojaiSearchClient.getConnection().getStore(tableConfig.getPath()).find();
+        for(Document doc : documents) {
+            ojaiSearchClient.getConnection().getStore(tableConfig.getPath()).delete(doc);
+        }
+
         Admin admin = Streams.newAdmin(new Configuration());
         String changelogStreamName = tableConfig.getChangelog().split(":")[0];
         if (!admin.streamExists(changelogStreamName)) {

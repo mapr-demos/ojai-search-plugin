@@ -38,7 +38,7 @@ public class MatchPhrasePrefixExample {
         OjaiSearchClient searchClient = new OjaiSearchClient(connection, ELASTIC_SEARCH_HOST_PORT);
 
         // Full-text search on 'indexed_field' field using MatchPhrase query
-        DocumentStream found = searchClient.search("/apps/tests_table",
+        DocumentStream found = searchClient.search("/apps/test_table",
                 new MatchPhrasePrefix("indexed_field", "Some t"));
 
         for (Document document : found) {
