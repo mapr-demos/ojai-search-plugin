@@ -16,7 +16,7 @@ Application, which uses OJAJ Search Client must be run on the machine with MapR 
 MapR Cluster nodes or separate machine.
 [Change Data Capture](https://maprdocs.mapr.com/60/MapR-DB/DB-ChangeData/setting-up-CDC.html) must be configured. Also,
 MapR-DB JSON Table with Changelog must exist. You can use 
-[create-table-changelog.sh](../search-plugin/bin/create-table-changelog.sh) script to create a table with changelog.
+[create-table-changelog.sh](../bin/create-table-changelog.sh) script to create a table with changelog.
 
 * OJAI Search Service properly configured and running
 
