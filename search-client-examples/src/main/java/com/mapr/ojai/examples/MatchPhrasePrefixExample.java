@@ -39,7 +39,7 @@ public class MatchPhrasePrefixExample {
 
         // Full-text search on 'indexed_field' field using MatchPhrase query
         DocumentStream found = searchClient.search("/apps/test_table",
-                new MatchPhrasePrefix("indexed_field", "Some t"));
+                new MatchPhrasePrefix("indexed_field", "Some t")).find();
 
         for (Document document : found) {
             log.info("Document found: {}", document);

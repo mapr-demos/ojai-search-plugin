@@ -10,9 +10,7 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.ojai.DocumentStream;
-import org.ojai.store.Connection;
-import org.ojai.store.DriverManager;
-import org.ojai.store.QueryCondition;
+import org.ojai.store.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +18,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -31,6 +30,47 @@ public class OjaiSearchClient implements Closeable {
 
     private final Connection connection;
     private final TransportClient client;
+
+    public class OjaiSearchResult {
+
+        private String tablePath;
+        private List<String> documentIds;
+
+        private OjaiSearchResult(String tablePath, List<String> documentIds) {
+            this.tablePath = tablePath;
+            this.documentIds = documentIds;
+        }
+
+        private OjaiSearchResult(String tablePath) {
+            this.tablePath = tablePath;
+        }
+
+        private List<String> getDocumentIds() {
+            return documentIds != null ? documentIds : Collections.emptyList();
+        }
+
+        public DocumentStream find() {
+
+            QueryCondition condition = connection.newCondition().in("_id", getDocumentIds());
+            return connection.getStore(tablePath).find(condition.build());
+        }
+
+        public QueryResult find(QueryCondition queryCondition) {
+
+            Query query = connection.newQuery()
+                    .where(connection.newCondition()
+                            .and()
+                            .condition(connection.newCondition().in("_id", getDocumentIds()).build())
+                            .condition(queryCondition.isBuilt() ? queryCondition : queryCondition.build())
+                            .close()
+                            .build()
+                    )
+                    .build();
+
+            return connection.getStore(tablePath).find(query);
+        }
+
+    }
 
     public OjaiSearchClient(Connection connection, String elasticHost, int elasticPort) {
 
@@ -115,7 +155,7 @@ public class OjaiSearchClient implements Closeable {
                 .addTransportAddress(new InetSocketTransportAddress(inetAddress, elasticPort));
     }
 
-    public DocumentStream search(String tablePath, OjaiSearchQuery query) {
+    public OjaiSearchResult search(String tablePath, OjaiSearchQuery query) {
 
         if (tablePath == null || tablePath.isEmpty()) {
             throw new IllegalArgumentException("Table path can not be empty");
@@ -142,10 +182,9 @@ public class OjaiSearchClient implements Closeable {
                 .map(SearchHit::getId)
                 .collect(Collectors.toList());
 
-        QueryCondition condition = connection.newCondition().in("_id", foundDocsIds);
-
-        return connection.getStore(tablePath).find(condition.build());
+        return new OjaiSearchResult(tablePath, foundDocsIds);
     }
+
 
     /**
      * Returns OJAI connection, used by this instance of {@link OjaiSearchClient}.

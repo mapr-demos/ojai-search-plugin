@@ -39,7 +39,7 @@ public class QueryStringExample {
 
         // Full-text search on 'indexed_field' field using QueryString query
         DocumentStream found = searchClient.search("/apps/test_table",
-                new QueryString("indexed_field", "(new york city) OR (search entry)"));
+                new QueryString("indexed_field", "(new york city) OR (search entry)")).find();
 
         for (Document document : found) {
             log.info("Document found: {}", document);

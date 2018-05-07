@@ -14,6 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ojai.Document;
 import org.ojai.DocumentStream;
+import org.ojai.store.QueryCondition.Op;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +64,7 @@ public class OjaiSearchClientIntegrationTest {
 
         // Delete all documents from test table
         DocumentStream documents = ojaiSearchClient.getConnection().getStore(tableConfig.getPath()).find();
-        for(Document doc : documents) {
+        for (Document doc : documents) {
             ojaiSearchClient.getConnection().getStore(tableConfig.getPath()).delete(doc);
         }
 
@@ -106,7 +107,7 @@ public class OjaiSearchClientIntegrationTest {
         // Wait for ElasticSearch to create index
         Thread.sleep(3_000L);
 
-        DocumentStream documentStream = ojaiSearchClient.search(tableConfig.getPath(), new Match("indexed_field", indexedField));
+        DocumentStream documentStream = ojaiSearchClient.search(tableConfig.getPath(), new Match("indexed_field", indexedField)).find();
         Iterator<Document> iterator = documentStream.iterator();
         assertTrue(iterator.hasNext());
 
@@ -130,7 +131,7 @@ public class OjaiSearchClientIntegrationTest {
         // Wait for ElasticSearch to create index
         Thread.sleep(3_000L);
 
-        DocumentStream documentStream = ojaiSearchClient.search(tableConfig.getPath(), new Match("indexed_field", searchEntry));
+        DocumentStream documentStream = ojaiSearchClient.search(tableConfig.getPath(), new Match("indexed_field", searchEntry)).find();
         Iterator<Document> iterator = documentStream.iterator();
         assertTrue(iterator.hasNext());
 
@@ -155,7 +156,7 @@ public class OjaiSearchClientIntegrationTest {
         // Wait for ElasticSearch to create index
         Thread.sleep(3_000L);
 
-        DocumentStream documentStream = ojaiSearchClient.search(tableConfig.getPath(), new Match("indexed_field", searchEntry + firstEntry));
+        DocumentStream documentStream = ojaiSearchClient.search(tableConfig.getPath(), new Match("indexed_field", searchEntry + firstEntry)).find();
         Iterator<Document> iterator = documentStream.iterator();
         assertTrue(iterator.hasNext());
 
@@ -181,7 +182,7 @@ public class OjaiSearchClientIntegrationTest {
         Thread.sleep(3_000L);
 
         DocumentStream documentStream = ojaiSearchClient.search(tableConfig.getPath(),
-                new Match("indexed_field", searchEntry + " Contains field entry search", Match.Operator.AND));
+                new Match("indexed_field", searchEntry + " Contains field entry search", Match.Operator.AND)).find();
         Iterator<Document> iterator = documentStream.iterator();
         assertTrue(iterator.hasNext());
 
@@ -207,7 +208,7 @@ public class OjaiSearchClientIntegrationTest {
         Thread.sleep(3_000L);
 
         DocumentStream documentStream = ojaiSearchClient.search(tableConfig.getPath(),
-                new Match("indexed_field", searchEntry + " Contains NON-EXISTENT entry search", Match.Operator.AND));
+                new Match("indexed_field", searchEntry + " Contains NON-EXISTENT entry search", Match.Operator.AND)).find();
         Iterator<Document> iterator = documentStream.iterator();
         assertFalse(iterator.hasNext());
     }
@@ -228,7 +229,7 @@ public class OjaiSearchClientIntegrationTest {
         Thread.sleep(3_000L);
 
         DocumentStream documentStream = ojaiSearchClient.search(tableConfig.getPath(),
-                new Match("indexed_field", searchEntry + " Contains NON-EXISTENT field entry search", Match.Operator.OR));
+                new Match("indexed_field", searchEntry + " Contains NON-EXISTENT field entry search", Match.Operator.OR)).find();
         Iterator<Document> iterator = documentStream.iterator();
         assertTrue(iterator.hasNext());
 
@@ -254,7 +255,7 @@ public class OjaiSearchClientIntegrationTest {
         Thread.sleep(3_000L);
 
         DocumentStream documentStream = ojaiSearchClient.search(tableConfig.getPath(),
-                new MatchPhrase("indexed_field", firstEntry + searchEntry));
+                new MatchPhrase("indexed_field", firstEntry + searchEntry)).find();
         Iterator<Document> iterator = documentStream.iterator();
         assertTrue(iterator.hasNext());
 
@@ -281,7 +282,7 @@ public class OjaiSearchClientIntegrationTest {
         Thread.sleep(3_000L);
 
         DocumentStream documentStream = ojaiSearchClient.search(tableConfig.getPath(),
-                new MatchPhrase("indexed_field", lastEntry + firstEntry + searchEntry));
+                new MatchPhrase("indexed_field", lastEntry + firstEntry + searchEntry)).find();
         Iterator<Document> iterator = documentStream.iterator();
         assertFalse(iterator.hasNext());
     }
@@ -299,7 +300,7 @@ public class OjaiSearchClientIntegrationTest {
         Thread.sleep(3_000L);
 
         DocumentStream documentStream = ojaiSearchClient.search(tableConfig.getPath(),
-                new MatchPhrasePrefix("indexed_field", searchEntry.substring(0, 20)));
+                new MatchPhrasePrefix("indexed_field", searchEntry.substring(0, 20))).find();
         Iterator<Document> iterator = documentStream.iterator();
         assertTrue(iterator.hasNext());
 
@@ -322,7 +323,7 @@ public class OjaiSearchClientIntegrationTest {
         Thread.sleep(3_000L);
 
         DocumentStream documentStream = ojaiSearchClient.search(tableConfig.getPath(),
-                new MultiMatch(searchEntry, "indexed_field", "second_indexed_field"));
+                new MultiMatch(searchEntry, "indexed_field", "second_indexed_field")).find();
         Iterator<Document> iterator = documentStream.iterator();
         assertTrue(iterator.hasNext());
 
@@ -346,7 +347,7 @@ public class OjaiSearchClientIntegrationTest {
         Thread.sleep(3_000L);
 
         DocumentStream documentStream = ojaiSearchClient.search(tableConfig.getPath(),
-                new MultiMatch(searchEntry, "*_field"));
+                new MultiMatch(searchEntry, "*_field")).find();
         Iterator<Document> iterator = documentStream.iterator();
         assertTrue(iterator.hasNext());
 
@@ -370,7 +371,86 @@ public class OjaiSearchClientIntegrationTest {
         Thread.sleep(3_000L);
 
         DocumentStream documentStream = ojaiSearchClient.search(tableConfig.getPath(),
-                new QueryString( "indexed_field", "(new york city) OR (big apple)"));
+                new QueryString("indexed_field", "(new york city) OR (big apple)")).find();
+        Iterator<Document> iterator = documentStream.iterator();
+        assertTrue(iterator.hasNext());
+
+        Document found = iterator.next();
+        assertNotNull(found);
+        assertEquals(indexedField, found.getString("indexed_field"));
+        assertEquals(details, found.getString("details"));
+    }
+
+    @Test
+    public void shouldNotFindWithOjaiQuery() throws InterruptedException {
+
+        String indexedField = UUID.randomUUID().toString();
+        String details = UUID.randomUUID().toString();
+
+        Document testDoc = ojaiSearchClient.getConnection().newDocument(new TestDocument(indexedField, details));
+        ojaiSearchClient.getConnection().getStore(tableConfig.getPath()).insert(testDoc, "indexed_field");
+
+        // Wait for ElasticSearch to create index
+        Thread.sleep(3_000L);
+
+        DocumentStream documentStream = ojaiSearchClient
+                .search(tableConfig.getPath(), new Match("indexed_field", indexedField))
+                .find(
+                        // Obtain OJAI QueryCondition instance from OJAI Connection
+                        ojaiSearchClient.getConnection().newCondition().is("indexed_field", Op.NOT_EQUAL, indexedField)
+                );
+
+        Iterator<Document> iterator = documentStream.iterator();
+        assertFalse(iterator.hasNext());
+    }
+
+    @Test
+    public void shouldFindWithOjaiQuery() throws InterruptedException {
+
+        String indexedField = UUID.randomUUID().toString();
+        String details = UUID.randomUUID().toString();
+
+        Document testDoc = ojaiSearchClient.getConnection().newDocument(new TestDocument(indexedField, details));
+        ojaiSearchClient.getConnection().getStore(tableConfig.getPath()).insert(testDoc, "indexed_field");
+
+        // Wait for ElasticSearch to create index
+        Thread.sleep(3_000L);
+
+        DocumentStream documentStream = ojaiSearchClient
+                .search(tableConfig.getPath(), new Match("indexed_field", indexedField))
+                .find(
+                        // Obtain OJAI QueryCondition instance from OJAI Connection
+                        ojaiSearchClient.getConnection().newCondition().is("indexed_field", Op.EQUAL, indexedField)
+                );
+
+        Iterator<Document> iterator = documentStream.iterator();
+        assertTrue(iterator.hasNext());
+
+        Document found = iterator.next();
+        assertNotNull(found);
+        assertEquals(indexedField, found.getString("indexed_field"));
+        assertEquals(details, found.getString("details"));
+    }
+
+    @Test
+    public void shouldFindWithBuiltOjaiQuery() throws InterruptedException {
+
+        String indexedField = UUID.randomUUID().toString();
+        String details = UUID.randomUUID().toString();
+
+        Document testDoc = ojaiSearchClient.getConnection().newDocument(new TestDocument(indexedField, details));
+        ojaiSearchClient.getConnection().getStore(tableConfig.getPath()).insert(testDoc, "indexed_field");
+
+        // Wait for ElasticSearch to create index
+        Thread.sleep(3_000L);
+
+        DocumentStream documentStream = ojaiSearchClient
+                .search(tableConfig.getPath(), new Match("indexed_field", indexedField))
+                .find(
+                        // Obtain OJAI QueryCondition instance from OJAI Connection
+                        ojaiSearchClient.getConnection().newCondition().is("indexed_field", Op.EQUAL, indexedField).build()
+                );
+
         Iterator<Document> iterator = documentStream.iterator();
         assertTrue(iterator.hasNext());
 

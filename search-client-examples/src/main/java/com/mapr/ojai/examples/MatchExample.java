@@ -39,7 +39,7 @@ public class MatchExample {
 
         // Full-text search on 'indexed_field' field using Match query
         DocumentStream found = searchClient.search("/apps/test_table",
-                new Match("indexed_field", "entry"));
+                new Match("indexed_field", "entry")).find();
 
         for (Document document : found) {
             log.info("Document found: {}", document);

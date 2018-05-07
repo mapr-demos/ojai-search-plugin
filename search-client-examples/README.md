@@ -89,7 +89,7 @@ Used for full text search on some field.
 
 ```
     // Full-text search on 'indexed_field' field using Match query
-    DocumentStream found = searchClient.search("/apps/test_table", new Match("indexed_field", "entry"));
+    DocumentStream found = searchClient.search("/apps/test_table", new Match("indexed_field", "entry")).find();
 ```
 
 * MatchPhrase
@@ -99,7 +99,7 @@ one you should reach for when you want to find words that are near each other.
  
 ```
     // Full-text search on 'indexed_field' field using MatchPhrase query
-    DocumentStream found = searchClient.search("/apps/test_table", new MatchPhrase("indexed_field", "Some text, which contains"));
+    DocumentStream found = searchClient.search("/apps/test_table", new MatchPhrase("indexed_field", "Some text, which contains")).find();
 
 ```
 
@@ -112,7 +112,7 @@ time of the query.
 
 ```
     // Full-text search on 'indexed_field' field using MatchPhrase query
-    DocumentStream found = searchClient.search("/apps/test_table", new MatchPhrasePrefix("indexed_field", "Some t"));
+    DocumentStream found = searchClient.search("/apps/test_table", new MatchPhrasePrefix("indexed_field", "Some t")).find();
 ```
 
 * MultiMatch
@@ -122,7 +122,7 @@ wildcards (eg: `*_name`).
 
 ```
     // Full-text search on 'indexed_field' field using MultiMatch query
-    DocumentStream found = searchClient.search("/apps/test_table", new MultiMatch("entry", "indexed_field", "second_indexed_field"));
+    DocumentStream found = searchClient.search("/apps/test_table", new MultiMatch("entry", "indexed_field", "second_indexed_field")).find();
 ```
 
 * QueryString
@@ -132,7 +132,7 @@ A query that uses a query parser in order to parse its content. See
 
 ```
     // Full-text search on 'indexed_field' field using QueryString query
-    DocumentStream found = searchClient.search("/apps/test_table", new QueryString("indexed_field", "(new york city) OR (search entry)"));
+    DocumentStream found = searchClient.search("/apps/test_table", new QueryString("indexed_field", "(new york city) OR (search entry)")).find();
 ```
 
 ## Running examples

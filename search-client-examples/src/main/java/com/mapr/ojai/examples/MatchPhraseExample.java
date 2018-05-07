@@ -40,7 +40,7 @@ public class MatchPhraseExample {
 
         // Full-text search on 'indexed_field' field using MatchPhrase query
         DocumentStream found = searchClient.search("/apps/test_table",
-                new MatchPhrase("indexed_field", "Some text, which contains"));
+                new MatchPhrase("indexed_field", "Some text, which contains")).find();
 
         for (Document document : found) {
             log.info("Document found: {}", document);
