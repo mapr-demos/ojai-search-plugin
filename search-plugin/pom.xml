@@ -19,6 +19,7 @@
         <elasticsearch.client.version>5.5.3</elasticsearch.client.version>
         <exec.plugin.version>1.6.0</exec.plugin.version>
         <junit.version>4.12</junit.version>
+        <jackson.version>2.9.9</jackson.version>
 
     </properties>
 
@@ -75,13 +76,13 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>2.9.5</version>
+            <version>${jackson.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.5</version>
+            <version>${jackson.version}</version>
         </dependency>
 
         <dependency>
