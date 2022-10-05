@@ -19,7 +19,7 @@
         <elasticsearch.client.version>5.5.3</elasticsearch.client.version>
         <exec.plugin.version>1.6.0</exec.plugin.version>
         <junit.version>4.13.1</junit.version>
-        <jackson.version>2.12.1</jackson.version>
+        <jackson.version>2.12.6.1</jackson.version>
 
     </properties>
 
